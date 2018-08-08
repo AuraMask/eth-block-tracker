@@ -1,12 +1,12 @@
 
-# eth-block-tracker
+# irc-block-tracker
 
-This module walks the Ethereum blockchain, keeping track of the latest block.
+This module walks the Ir blockchain, keeping track of the latest block.
 It uses a web3 provider as a data source and will continuously poll for the next block.
 
 ```js
-const HttpProvider = require('ethjs-provider-http')
-const PollingBlockTracker = require('eth-block-tracker')
+const HttpProvider = require('icjs-provider-http')
+const PollingBlockTracker = require('irc-block-tracker')
 
 const provider = new HttpProvider('https://mainnet.infura.io')
 const blockTracker = new PollingBlockTracker({ provider })

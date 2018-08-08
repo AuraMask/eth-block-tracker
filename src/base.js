@@ -1,11 +1,11 @@
-const EthQuery = require('eth-query')
-const EventEmitter = require('events')
-const pify = require('pify')
+const IrcQuery = require('irc-query');
+const EventEmitter = require('events');
+const pify = require('pify');
 
-const sec = 1000
+const sec = 1000;
 
-const calculateSum = (accumulator, currentValue) => accumulator + currentValue
-const blockTrackerEvents = ['sync', 'latest']
+const calculateSum = (accumulator, currentValue) => accumulator + currentValue;
+const blockTrackerEvents = ['sync', 'latest'];
 
 class BaseBlockTracker extends EventEmitter {
 
@@ -14,61 +14,61 @@ class BaseBlockTracker extends EventEmitter {
   //
 
   constructor(opts = {}) {
-    super()
+    super();
     // config
-    this._blockResetDuration = opts.blockResetDuration || 20 * sec
+    this._blockResetDuration = opts.blockResetDuration || 20 * sec;
     // state
-    this._blockResetTimeout
-    this._currentBlock = null
-    this._isRunning = false
+    this._blockResetTimeout;
+    this._currentBlock = null;
+    this._isRunning = false;
     // bind functions for internal use
-    this._onNewListener = this._onNewListener.bind(this)
-    this._onRemoveListener = this._onRemoveListener.bind(this)
-    this._resetCurrentBlock = this._resetCurrentBlock.bind(this)
+    this._onNewListener = this._onNewListener.bind(this);
+    this._onRemoveListener = this._onRemoveListener.bind(this);
+    this._resetCurrentBlock = this._resetCurrentBlock.bind(this);
     // listen for handler changes
-    this._setupInternalEvents()
+    this._setupInternalEvents();
   }
 
   isRunning() {
-    return this._isRunning
+    return this._isRunning;
   }
 
-  getCurrentBlock () {
-    return this._currentBlock
+  getCurrentBlock() {
+    return this._currentBlock;
   }
 
-  async getLatestBlock () {
+  async getLatestBlock() {
     // return if available
-    if (this._currentBlock) return this._currentBlock
+    if (this._currentBlock) return this._currentBlock;
     // wait for a new latest block
-    const latestBlock = await new Promise(resolve => this.once('latest', resolve))
+    const latestBlock = await new Promise(resolve => this.once('latest', resolve));
     // return newly set current block
-    return latestBlock
+    return latestBlock;
   }
 
   // dont allow module consumer to remove our internal event listeners
   removeAllListeners(eventName) {
     // perform default behavior, preserve fn arity
     if (eventName) {
-      super.removeAllListeners(eventName)
+      super.removeAllListeners(eventName);
     } else {
-      super.removeAllListeners()
+      super.removeAllListeners();
     }
     // re-add internal events
-    this._setupInternalEvents()
+    this._setupInternalEvents();
     // trigger stop check just in case
-    this._onRemoveListener()
+    this._onRemoveListener();
   }
 
   //
   // to be implemented in subclass
   //
 
-  _start () {
+  _start() {
     // default behavior is noop
   }
 
-  _end () {
+  _end() {
     // default behavior is noop
   }
 
@@ -76,85 +76,85 @@ class BaseBlockTracker extends EventEmitter {
   // private
   //
 
-  _setupInternalEvents () {
+  _setupInternalEvents() {
     // first remove listeners for idempotence
-    this.removeListener('newListener', this._onNewListener)
-    this.removeListener('removeListener', this._onRemoveListener)
+    this.removeListener('newListener', this._onNewListener);
+    this.removeListener('removeListener', this._onRemoveListener);
     // then add them
-    this.on('newListener', this._onNewListener)
-    this.on('removeListener', this._onRemoveListener)
+    this.on('newListener', this._onNewListener);
+    this.on('removeListener', this._onRemoveListener);
   }
 
-  _onNewListener (eventName, handler) {
+  _onNewListener(eventName, handler) {
     // `newListener` is called *before* the listener is added
-    if (!blockTrackerEvents.includes(eventName)) return
-    this._maybeStart()
+    if (!blockTrackerEvents.includes(eventName)) return;
+    this._maybeStart();
   }
 
-  _onRemoveListener (eventName, handler) {
+  _onRemoveListener(eventName, handler) {
     // `removeListener` is called *after* the listener is removed
-    if (this._getBlockTrackerEventCount() > 0) return
-    this._maybeEnd()
+    if (this._getBlockTrackerEventCount() > 0) return;
+    this._maybeEnd();
   }
 
-  _maybeStart () {
-    if (this._isRunning) return
-    this._isRunning = true
+  _maybeStart() {
+    if (this._isRunning) return;
+    this._isRunning = true;
     // cancel setting latest block to stale
-    this._cancelBlockResetTimeout()
-    this._start()
+    this._cancelBlockResetTimeout();
+    this._start();
   }
 
-  _maybeEnd () {
-    if (!this._isRunning) return
-    this._isRunning = false
-    this._setupBlockResetTimeout()
-    this._end()
+  _maybeEnd() {
+    if (!this._isRunning) return;
+    this._isRunning = false;
+    this._setupBlockResetTimeout();
+    this._end();
   }
 
-  _getBlockTrackerEventCount () {
+  _getBlockTrackerEventCount() {
     return blockTrackerEvents
-      .map(eventName => this.listenerCount(eventName))
-      .reduce(calculateSum)
+        .map(eventName => this.listenerCount(eventName))
+        .reduce(calculateSum);
   }
 
-  _newPotentialLatest (newBlock) {
-    const currentBlock = this._currentBlock
+  _newPotentialLatest(newBlock) {
+    const currentBlock = this._currentBlock;
     // only update if blok number is higher
-    if (currentBlock && (hexToInt(newBlock) <= hexToInt(currentBlock))) return
-    this._setCurrentBlock(newBlock)
+    if (currentBlock && (hexToInt(newBlock) <= hexToInt(currentBlock))) return;
+    this._setCurrentBlock(newBlock);
   }
 
-  _setCurrentBlock (newBlock) {
-    const oldBlock = this._currentBlock
-    this._currentBlock = newBlock
-    this.emit('latest', newBlock)
-    this.emit('sync', { oldBlock, newBlock })
+  _setCurrentBlock(newBlock) {
+    const oldBlock = this._currentBlock;
+    this._currentBlock = newBlock;
+    this.emit('latest', newBlock);
+    this.emit('sync', {oldBlock, newBlock});
   }
 
   _setupBlockResetTimeout() {
     // clear any existing timeout
-    this._cancelBlockResetTimeout()
+    this._cancelBlockResetTimeout();
     // clear latest block when stale
-    this._blockResetTimeout = setTimeout(this._resetCurrentBlock, this._blockResetDuration)
+    this._blockResetTimeout = setTimeout(this._resetCurrentBlock, this._blockResetDuration);
     // nodejs - dont hold process open
     if (this._blockResetTimeout.unref) {
-      this._blockResetTimeout.unref()
+      this._blockResetTimeout.unref();
     }
   }
 
   _cancelBlockResetTimeout() {
-    clearTimeout(this._blockResetTimeout)
+    clearTimeout(this._blockResetTimeout);
   }
 
-  _resetCurrentBlock  () {
-    this._currentBlock = null
+  _resetCurrentBlock() {
+    this._currentBlock = null;
   }
 
 }
 
-module.exports = BaseBlockTracker
+module.exports = BaseBlockTracker;
 
 function hexToInt(hexInt) {
-  return Number.parseInt(hexInt, 16)
+  return Number.parseInt(hexInt, 16);
 }
