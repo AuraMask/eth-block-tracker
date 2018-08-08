@@ -14,7 +14,7 @@
   "author": "IrChain Team <contact@irchain.io>",
   "license": "MIT",
   "dependencies": {
-    "irc-json-rpc-infura": "git+https://github.com/AuraMask/irc-json-rpc-infura.git",
+    "irc-json-rpc-infura": "^0.0.1",
     "irc-query": "^0.0.1",
     "pify": "^3.0.0"
   },
