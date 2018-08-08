@@ -1,6 +1,6 @@
 {
   "name": "irc-block-tracker",
-  "version": "4.0.1",
+  "version": "0.0.1",
   "description": "A block tracker for the Ir blockchain. Keeps track of the latest block.",
   "main": "src/polling.js",
   "scripts": {
@@ -36,5 +36,8 @@
   "bugs": {
     "url": "https://github.com/AuraMask/irc-block-tracker/issues"
   },
-  "homepage": "https://github.com/AuraMask/irc-block-tracker#readme"
+  "homepage": "https://github.com/AuraMask/irc-block-tracker#readme",
+  "keywords": [
+    "irchain"
+  ]
 }
