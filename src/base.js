@@ -1,24 +1,17 @@
-const IrcQuery = require('irc-query');
 const EventEmitter = require('events');
-const pify = require('pify');
-
-const sec = 1000;
-
 const calculateSum = (accumulator, currentValue) => accumulator + currentValue;
 const blockTrackerEvents = ['sync', 'latest'];
+const sec = 1000;
 
 class BaseBlockTracker extends EventEmitter {
 
-  //
   // public
-  //
-
   constructor(opts = {}) {
     super();
     // config
     this._blockResetDuration = opts.blockResetDuration || 20 * sec;
     // state
-    this._blockResetTimeout;
+    this._blockResetTimeout = null;
     this._currentBlock = null;
     this._isRunning = false;
     // bind functions for internal use

@@ -1,5 +1,4 @@
 const IrcQuery = require('irc-query');
-const EventEmitter = require('events');
 const pify = require('pify');
 const BaseBlockTracker = require('./base');
 

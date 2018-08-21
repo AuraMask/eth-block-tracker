@@ -7,10 +7,10 @@ const blockTracker = new PollingBlockTracker({provider});
 
 blockTracker.on('latest', console.log);
 
-// blockTracker.on('sync', ({newBlock, oldBlock}) => {
-//   if (oldBlock) {
-//     console.log(`sync #${Number(oldBlock)} -> #${Number(newBlock)}`);
-//   } else {
-//     console.log(`first sync #${Number(newBlock)}`);
-//   }
-// });
+blockTracker.on('sync', ({newBlock, oldBlock}) => {
+  if (oldBlock) {
+    console.log(`sync #${Number(oldBlock)} -> #${Number(newBlock)}`);
+  } else {
+    console.log(`first sync #${Number(newBlock)}`);
+  }
+});
