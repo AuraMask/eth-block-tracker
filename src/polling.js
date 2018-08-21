@@ -61,7 +61,7 @@ class PollingBlockTracker extends BaseBlockTracker {
   }
 
   async _fetchLatestBlock() {
-    return await pify(this._query.blockNumber).call(this._query);
+    return await pify(this._query.getBlockByNumber).call(this._query, 'latest', true);
   }
 
 }

@@ -12,9 +12,6 @@ module.exports = (test, testLabel, BaseBlockTracker) => {
     blockTracker.once('hello', () => t.fail('should never be called'));
     t.equal(blockTracker.isRunning(), false, 'block tracker is not started by unrelated event');
 
-    blockTracker.once('block', () => t.fail('should never be called'));
-    t.equal(blockTracker.isRunning(), false, 'block tracker is not started by removed "block" event');
-
     // check start
     blockTracker.once('latest', noop);
     t.equal(blockTracker.isRunning(), true, 'block tracker is started by "latest" event');
