@@ -1,5 +1,4 @@
-
-# irc-block-tracker
+# irc-block-tracker [![CircleCI](https://circleci.com/gh/AuraMask/irc-block-tracker.svg?style=svg)](https://circleci.com/gh/AuraMask/irc-block-tracker)
 
 This module walks the Ir blockchain, keeping track of the latest block.
 It uses a web3 provider as a data source and will continuously poll for the next block.
