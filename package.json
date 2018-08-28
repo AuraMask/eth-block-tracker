@@ -1,6 +1,6 @@
 {
   "name": "irc-block-tracker",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A block tracker for the Ir blockchain. Keeps track of the latest block.",
   "main": "src/polling.js",
   "scripts": {
